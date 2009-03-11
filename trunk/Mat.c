@@ -41,7 +41,8 @@ int * Nussi(char* seq,int N)
 		int cpt=0;
 		if(Matching(seq[i],seq[j])==1)
 		  {
-		    printf(&seq[i]);
+			
+		    printf("%s",&seq[i]);
 		    printf("\n");
 		    printf(&seq[j]);
 		    printf("\n");
@@ -62,17 +63,21 @@ int * Nussi(char* seq,int N)
 
 int main(void)
 {
-    char *seq="CGCCGCGCCG";
-    int * mat=Nussi(seq,10);
-    int i,j;
-    printf(seq);
-    for(j=0;j<10;j++)
-    {
-	for(i=0;i<j;i++)
-	{
-	  printf("%d ",mat[j*(j-1)/2+i]);
-	}
+    char seq[10];
+	seq="CGCCGCGCCG";
+	char a=seq[6];
+	printf("%s",&a);
 	printf("\n");
-    }
+//    int * mat=Nussi(seq,10);
+//    int i,j;
+//    printf(seq);
+//    for(j=0;j<10;j++)
+//    {
+//	for(i=0;i<j;i++)
+//	{
+//	  printf("%d ",mat[j*(j-1)/2+i]);
+//	}
+//	printf("\n");
+//    }
     return 0;
 }
