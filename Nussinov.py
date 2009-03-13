@@ -14,6 +14,14 @@ def min(list):
            min=list[i]
     return min
 
+# La classique fonction miax
+def min(list):
+    max=list[0]
+    for i in range(len(list)):
+       if(max < list[i]):
+           max=list[i]
+    return max
+
 # Fonction d'affichage de la matrice triangulaire inferieure
 def printi(mat,n):
     for i in range(1,n,1):
@@ -53,10 +61,31 @@ def MatInf(seq):
             nbG=list.count("G")
             l1=[nbA,nbU]
             l2=[nbC,nbG]
-            mat[j*(j-1)/2+i]=min(l1)+min(l2)
-            
+            mat[j*(j-1)/2+i]=min(l1)+min(l2)            
     return mat            
                 
+
+def MatSup(seq):
+    T=len(seq)
+    
+    list=[]
+    for k in range(1,T,1):
+        seqi=[]
+        seqs=[]
+        for i in range(k):
+            seqi.append(seq[i])
+        for i in range(k+1,T,1):
+            seqs.append(seq[i])
+        print seqi,seqs
+        mati=MatInf(seqi)
+        printi(mati,len(mati))
+        mats=MatInf(seqs)
+        printi(mats,len(mats))
+        #list.append(mati[(len(seqi)-1)*(len(seqi)-2)/2])
+    #m=max(list)
+    return 21#list.index(m)
+
+        
 
 
 #################
@@ -65,8 +94,10 @@ def MatInf(seq):
 #               #
 #################
 
-f=open("Sequence2.txt","r")
+f=open("Sequence1.txt","r")
 seq=f.readline()
 print seq
-printi(MatInf(seq),25)
+printi(MatInf(seq),len(seq))
+#print MatInf(seq)
+#print MatSup(seq)
 #prints(MatInf(seq),10)
