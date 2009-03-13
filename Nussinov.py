@@ -6,12 +6,13 @@ def Match(a,b):
         return True
     return False
 
-# La classique fonction max
-def max(x,y):
-    if(x>=y):
-        return x
-    else:
-        return y
+# La classique fonction min
+def min(list):
+    min=list[0]
+    for i in range(len(list)):
+       if(min > list[i]):
+           min=list[i]
+    return min
 
 # Fonction d'affichage de la matrice triangulaire inferieure
 def printi(mat,n):
@@ -40,13 +41,20 @@ def MatInf(seq):
     for i in range(T*(T-1)/2):
         mat.append(0)
 
-    for j in range(1,len(seq),1):
-        for i in range(j):
-            for k in range(i,j,1):
-                if((j-i)==1):
-                    if(Match(seq[k],seq[j])):
-                        mat[j*(j-1)/2+i]=1
+    for j in range(1,T,1):
+        for i in range(0,j,1):
+            list=[]
+            for k in range(i,j+1,1):
+                list.append(seq[k])
 
+            nbA=list.count("A")
+            nbU=list.count("U")
+            nbC=list.count("C")
+            nbG=list.count("G")
+            l1=[nbA,nbU]
+            l2=[nbC,nbG]
+            mat[j*(j-1)/2+i]=min(l1)+min(l2)
+            
     return mat            
                 
 
@@ -57,9 +65,8 @@ def MatInf(seq):
 #               #
 #################
 
-f=open("Sequence1.txt","r")
+f=open("Sequence2.txt","r")
 seq=f.readline()
 print seq
-printi(MatInf(seq),10)
-print "\n"
+printi(MatInf(seq),25)
 #prints(MatInf(seq),10)
