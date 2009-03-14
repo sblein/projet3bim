@@ -1,21 +1,26 @@
-# Compare deux bases et renvoie vrai si elles peuvent s'apparier, faux sinon
-def Match(a,b):
+import numpy
+
+# Matrice de score des appariements possibles
+def Match2(a,b):
     if((a[0]=="A" and b[0]=="U") or (a[0]=="U" and b[0]=="A")):
-        return True
-    if((a[0]=="G" and b[0]=="C") or (a[0]=="C" and b[0]=="G")):
-        return True
-    return False
+        return -3
+    elif((a[0]=="G" and b[0]=="C") or (a[0]=="C" and b[0]=="G")):
+        return -4
+    elif((a[0]=="G" and b[0]=="U") or (a[0]=="U" and b[0]=="G")):  
+    	return -2    
+    else:
+    	return 0
 
 # La classique fonction min
 def min(list):
     min=list[0]
     for i in range(len(list)):
-       if(min > list[i]):
+       if(list[i]<min):
            min=list[i]
     return min
 
-# La classique fonction miax
-def min(list):
+# La classique fonction max
+def max(list):
     max=list[0]
     for i in range(len(list)):
        if(max < list[i]):
@@ -38,66 +43,107 @@ def prints(mat,n):
             list.append(mat[i*(i-1)/2+j])
         print list   
 
-def NbLiaison(seq,k):
-    nb=0
+def Match(seq):
+	nbA=seq.count("A")
+	nbU=seq.count("U")
+	nbC=seq.count("C")
+	nbG=seq.count("G")
+	nb=min([nbA,nbU])*Match2("A","U")+min([nbG,nbC])*Match2("G","C")
+	return nb
     
 
 # Calcule la matrice inferieure suivant l'algorithme de Nussinov
-def MatInf(seq):
-    T=len(seq)
-    mat=[]
-    for i in range(T*(T-1)/2):
-        mat.append(0)
+def Mat(seq):
+	T=len(seq)
+	mat=numpy.zeros(T*T)
+	mat=numpy.reshape(mat,(T,T))
+	
+	for p in range(1,T,1):
+		if p==1:
+			for j in range(1,T,1):
+				mat[j-1,j]=Match2(seq[j-1],seq[j])		
+		else :
+			for j in range(p,T,1):
+				#mat[j-p,j]=Match(seq[j-p:j+1])
+				A=mat[j-p,j-1]
+				B=mat[j-p+1,j]
+				C=Match2(seq[j-p],seq[j])+mat[j-p+1,j-1]
+				list=[]
+				for k in range(j-p+1,j,1):
+					list.append(mat[j-p,k]+mat[k+1,j])
+				D=min(list)
+				mat[j-p,j]=min([A,B,C,D])
+				#print "p=%d \t j=%d %s\t "%(p+1,j,seq[j-p:j+1])
+	return mat
+	
+def TraceBack(mat,T,seq):		
+	way=[]
+	way.append([0,T-1,mat[0,T-1]])
+	#if(mat[0,T-1]==mat[0,T-2] or mat[0,T-1]==mat[1,T-1]):
+		#way.pop()
+	j=T-1
+	i=0
+	while(j>0 and i<j):
+		dep=mat[i,j]
+		A=mat[i,j-1]
+		B=mat[i+1,j]
+		C=mat[i+1,j-1]+Match2(seq[i],seq[j])
+		kl=1
+		D=mat[i,i+1]+mat[i+2,j]
+		for k in range(i+2,j,1):
+			if(D>mat[i,k]+mat[k+1,j]):
+				D=mat[i,k]+mat[k+1,j]
+				kl=k
+		if(dep==A):
+			way.append([i,j-1,mat[i,j-1]])
+			j-=1
+		elif(dep==B):
+			way.append([i+1,j,mat[i+1,j]])
+			i+=1
+		elif(dep==C):
+			way.append([i+1,j-1,mat[i+1,j-1]])
+			i+=1
+			j-=1
+		elif(dep==D):
+			way.append([i+kl+1,j,mat[i+kl+1,j]])
+			i+=kl+1
+	return way
 
-    for j in range(1,T,1):
-        for i in range(0,j,1):
-            list=[]
-            for k in range(i,j+1,1):
-                list.append(seq[k])
+def Transfo(u,v):
+	if(u[0]==v[0] and u[1]==(v[1]+1)):
+		return "A"
+	elif(u[0]==(v[0]-1) and u[1]==v[1]):
+		return "B"
+	elif(u[0]==(v[0]-1) and u[1]==(v[1]+1)):
+		return "C"
+	else:
+		return "D"
 
-            nbA=list.count("A")
-            nbU=list.count("U")
-            nbC=list.count("C")
-            nbG=list.count("G")
-            l1=[nbA,nbU]
-            l2=[nbC,nbG]
-            mat[j*(j-1)/2+i]=min(l1)+min(l2)            
-    return mat            
-                
-
-def MatSup(seq):
-    T=len(seq)
-    
-    list=[]
-    for k in range(1,T,1):
-        seqi=[]
-        seqs=[]
-        for i in range(k):
-            seqi.append(seq[i])
-        for i in range(k+1,T,1):
-            seqs.append(seq[i])
-        print seqi,seqs
-        mati=MatInf(seqi)
-        printi(mati,len(mati))
-        mats=MatInf(seqs)
-        printi(mats,len(mats))
-        #list.append(mati[(len(seqi)-1)*(len(seqi)-2)/2])
-    #m=max(list)
-    return 21#list.index(m)
-
-        
-
-
+def BasePairs(seq,way):		
+	bp=[]
+	for i in range(len(way)-1):
+		t=Transfo(way[i],way[i+1])
+		#print t,way[i]
+		if(t=="A"):
+			bp.append([way[i][1],seq[way[i][1]]])
+		elif(t=="B"):
+			bp.append([way[i][0],seq[way[i][0]]])
+		elif(t=="C"):
+			bp.append([way[i][1],seq[way[i][1]],way[i][0],seq[way[i][0]]])
+		#elif(t=="D"):
+			#bp.append([way[i][1],seq[way[i][1]],way[i][0],seq[way[i][0]]])
+	return bp	
+			
+		
 #################
 #               #
 # Zone de tests #
 #               #
 #################
 
-f=open("Sequence1.txt","r")
+f=open("Sequence3.txt","r")
 seq=f.readline()
-print seq
-printi(MatInf(seq),len(seq))
-#print MatInf(seq)
-#print MatSup(seq)
-#prints(MatInf(seq),10)
+seq=seq.rstrip('\n')
+print Mat(seq)
+print TraceBack(Mat(seq),len(seq),seq)
+print BasePairs(seq,TraceBack(Mat(seq),len(seq),seq))
