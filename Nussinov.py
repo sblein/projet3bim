@@ -1,13 +1,14 @@
 import numpy
+APP_AU=-3
 
 # Matrice de score des appariements possibles
 def Match2(a,b):
     if((a[0]=="A" and b[0]=="U") or (a[0]=="U" and b[0]=="A")):
-        return -1
+        return APP_AU
     elif((a[0]=="G" and b[0]=="C") or (a[0]=="C" and b[0]=="G")):
-        return -1
+        return -4
     elif((a[0]=="G" and b[0]=="U") or (a[0]=="U" and b[0]=="G")):  
-    	return 0    
+    	return -2   
     else:
     	return 0
 
@@ -30,8 +31,8 @@ def max(list):
 # Calcule la matrice inferieure suivant l'algorithme de Nussinov
 def Mat(seq):
 	T=len(seq)
-	mat=numpy.zeros(T*T)
-	mat=numpy.reshape(mat,(T,T))
+	mat=numpy.zeros((T,T))
+	#mat=numpy.reshape(mat,(T,T))
 	
 	for p in range(1,T,1):
 		if p==1:
