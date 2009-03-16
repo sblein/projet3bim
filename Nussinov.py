@@ -40,7 +40,6 @@ def Mat(seq):
 				mat[j-1,j]=Match2(seq[j-1],seq[j])		
 		else :
 			for j in range(p,T,1):
-				#mat[j-p,j]=Match(seq[j-p:j+1])
 				A=mat[j-p,j-1]
 				B=mat[j-p+1,j]
 				C=Match2(seq[j-p],seq[j])+mat[j-p+1,j-1]
@@ -49,7 +48,6 @@ def Mat(seq):
 					list.append(mat[j-p,k]+mat[k+1,j])
 				D=min(list)
 				mat[j-p,j]=min([A,B,C,D])
-				#print "p=%d \t j=%d %s\t "%(p+1,j,seq[j-p:j+1])
 	return mat
 
 # Fonction qui retrouve le chemin emprunte pour remplir la derniere case	
@@ -110,7 +108,6 @@ def BasePairs(seq,way):
 		elif(t=="C"):
                     bp.append([way[i][1],seq[way[i][1]],way[i][0],seq[way[i][0]]])
 		elif(t=="D"):
-                    #bp.append([way[i][1],seq[way[i][1]],way[i][0],seq[way[i][0]]])
                     seq2=[]
                     for j in range(way[i+1][3]+1):
                         seq2.append(seq[j])
