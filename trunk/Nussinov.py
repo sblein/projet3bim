@@ -146,6 +146,7 @@ def BasePairs(seq,way):
 f=open("Sequence3.txt","r")
 seq=f.readline()
 seq=seq.rstrip('\n')
+print seq
 print Mat(seq)
 print TraceBack(Mat(seq),len(seq),seq)
 print BasePairs(seq,TraceBack(Mat(seq),len(seq),seq))
