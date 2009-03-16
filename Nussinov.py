@@ -89,24 +89,26 @@ def TraceBack(mat,T,seq):
 		B=mat[i+1,j]
 		C=mat[i+1,j-1]+Match2(seq[i],seq[j])
 		kl=1
-		D=mat[i,i+1]+mat[i+2,j]
-		for k in range(i+2,j,1):
+                D=0
+                if(i<T-2):
+                    D=mat[i,i+1]+mat[i+2,j]
+                    for k in range(i+2,j,1):
 			if(D>mat[i,k]+mat[k+1,j]):
 				D=mat[i,k]+mat[k+1,j]
 				kl=k
-		if(dep==A):
-			way.append([i,j-1,mat[i,j-1]])
-			j-=1
-		elif(dep==B):
-			way.append([i+1,j,mat[i+1,j]])
-			i+=1
+                if dep==A:
+                    way.append([i,j-1,mat[i,j-1]])
+                    j-=1
+		elif dep==B :
+                    way.append([i+1,j,mat[i+1,j]])
+                    i+=1
 		elif(dep==C):
-			way.append([i+1,j-1,mat[i+1,j-1]])
-			i+=1
-			j-=1
+                    way.append([i+1,j-1,mat[i+1,j-1]])
+                    i+=1
+                    j-=1
 		elif(dep==D):
-			way.append([i+kl+1,j,mat[i+kl+1,j]])
-			i+=kl+1
+                    way.append([i+kl+1,j,mat[i+kl+1,j]])
+                    i+=kl+1
 	return way
 
 def Transfo(u,v):
