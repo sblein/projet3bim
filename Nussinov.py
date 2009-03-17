@@ -144,7 +144,7 @@ def BasePairs(seq,way):
 #               #
 #################
 
-f=open("Sequence4.txt","r")
+f=open("Sequence1.txt","r")
 seq=f.readline()
 seq=seq.rstrip('\n')
 print seq
