@@ -1,31 +1,33 @@
 import numpy
 APP_AU=-3
+APP_GC=-4
+APP_GU=-2
 
 # Matrice de score des appariements possibles
 def Match2(a,b):
     if((a[0]=="A" and b[0]=="U") or (a[0]=="U" and b[0]=="A")):
         return APP_AU
     elif((a[0]=="G" and b[0]=="C") or (a[0]=="C" and b[0]=="G")):
-        return -4
+        return APP_GC
     elif((a[0]=="G" and b[0]=="U") or (a[0]=="U" and b[0]=="G")):  
-    	return -2   
+    	return APP_GU  
     else:
     	return 0
 
 # La classique fonction min
 def min(list):
     min=list[0]
-    for i in range(len(list)):
-       if(list[i]<min):
-           min=list[i]
+    for x in list:
+       if(x<min):
+           min=x
     return min
 
 # La classique fonction max
 def max(list):
     max=list[0]
-    for i in range(len(list)):
-       if(max < list[i]):
-           max=list[i]
+    for x in list:
+       if(max < x):
+           max=x
     return max
 
 # Calcule la matrice inferieure suivant l'algorithme de Nussinov
@@ -51,7 +53,8 @@ def Mat(seq):
 	return mat
 
 # Fonction qui retrouve le chemin emprunte pour remplir la derniere case	
-def TraceBack(mat,T,seq):		
+def TraceBack(mat,seq):	
+        T=len(seq)
 	way=[]
 	way.append([0,T-1,mat[0,T-1]])
 	j=T-1
@@ -95,6 +98,23 @@ def Transfo(u,v):
 	else:
 		return "D"
 
+def save(bp):
+    f=open("Appariement.txt","a")
+    list=[]
+    for i in range(len(bp)):
+        #print i
+        if type(bp[i][0])==list:
+            save(bp[i])
+        else:
+            str=[]
+            if(len(bp[i])==4):
+                str="%s "%bp[i][1]+"%d"%bp[i][0]+" %d"%bp[i][2]+" %s"%bp[i][3]+"\n"
+            elif (len(bp[i])==2):
+                str="%s "%bp[i][1]+"%d"%bp[i][0]+"\n" 
+            f.writelines(str)
+    #print list
+    
+
 # Fonction qui retourne les bases qui sont appariees dans la structure de plus basse energie
 def BasePairs(seq,way):		
 	bp=[]
@@ -113,7 +133,8 @@ def BasePairs(seq,way):
                         seq2.append(seq[j])
                     print way[i+1][3],seq2
                     if(len(seq)>0):
-                        bp.append(BasePairs(seq2,TraceBack(Mat(seq2),len(seq2),seq2)))
+                        bp.append(BasePairs(seq2,TraceBack(Mat(seq2),seq2)))
+        save(bp)
 	return bp	
 			
 		
@@ -128,5 +149,5 @@ seq=f.readline()
 seq=seq.rstrip('\n')
 print seq
 print Mat(seq)
-print TraceBack(Mat(seq),len(seq),seq)
-print BasePairs(seq,TraceBack(Mat(seq),len(seq),seq))
+print TraceBack(Mat(seq),seq)
+print BasePairs(seq,TraceBack(Mat(seq),seq))
