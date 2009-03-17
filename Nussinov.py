@@ -18,7 +18,7 @@ def Match2(a,b):
 def min(list):
     min=list[0]
     for x in list:
-       if(x<min):
+       if x<min:
            min=x
     return min
 
@@ -26,7 +26,7 @@ def min(list):
 def max(list):
     max=list[0]
     for x in list:
-       if(max < x):
+       if max < x:
            max=x
     return max
 
@@ -34,22 +34,21 @@ def max(list):
 def Mat(seq):
 	T=len(seq)
 	mat=numpy.zeros((T,T))
-	#mat=numpy.reshape(mat,(T,T))
 	
 	for p in range(1,T,1):
-		if p==1:
-			for j in range(1,T,1):
-				mat[j-1,j]=Match2(seq[j-1],seq[j])		
-		else :
-			for j in range(p,T,1):
-				A=mat[j-p,j-1]
-				B=mat[j-p+1,j]
-				C=Match2(seq[j-p],seq[j])+mat[j-p+1,j-1]
-				list=[]
-				for k in range(j-p+1,j,1):
-					list.append(mat[j-p,k]+mat[k+1,j])
-				D=min(list)
-				mat[j-p,j]=min([A,B,C,D])
+            if p==1:
+                for j in range(1,T,1):
+                    mat[j-1,j]=Match2(seq[j-1],seq[j])		
+            else :
+                for j in range(p,T,1):
+                    A=mat[j-p,j-1]
+                    B=mat[j-p+1,j]
+                    C=Match2(seq[j-p],seq[j])+mat[j-p+1,j-1]
+                    list=[]
+                    for k in range(j-p+1,j,1):
+			list.append(mat[j-p,k]+mat[k+1,j])
+			D=min(list)
+                    mat[j-p,j]=min([A,B,C,D])
 	return mat
 
 # Fonction qui retrouve le chemin emprunte pour remplir la derniere case	
@@ -70,8 +69,8 @@ def TraceBack(mat,seq):
                     D=mat[i,i+1]+mat[i+2,j]
                     for k in range(i+2,j,1):
 			if(D>mat[i,k]+mat[k+1,j]):
-				D=mat[i,k]+mat[k+1,j]
-				kl=k
+                            D=mat[i,k]+mat[k+1,j]
+                            kl=k
                 if dep==A:
                     way.append([i,j-1,mat[i,j-1]])
                     j-=1
@@ -89,12 +88,12 @@ def TraceBack(mat,seq):
 
 # Fonction qui retrouve la transfo qui a eu lieu entre 2 cases
 def Transfo(u,v):
-	if(u[0]==v[0] and u[1]==(v[1]+1)):
-		return "A"
+        if(u[0]==(v[0]-1) and u[1]==(v[1]+1)):
+		return "C"
 	elif(u[0]==(v[0]-1) and u[1]==v[1]):
 		return "B"
-	elif(u[0]==(v[0]-1) and u[1]==(v[1]+1)):
-		return "C"
+	elif(u[0]==v[0] and u[1]==(v[1]+1)):
+		return "A"
 	else:
 		return "D"
 
@@ -119,20 +118,29 @@ def save(bp):
 def BasePairs(seq,way):		
 	bp=[]
 	for i in range(len(way)-1):
-		t=Transfo(way[i],way[i+1])
-                print t
-		if(t=="A"):
-                    bp.append([way[i][1],seq[way[i][1]]])
-		elif(t=="B"):
-                    bp.append([way[i][0],seq[way[i][0]]])
-		elif(t=="C"):
+                t=Transfo(way[i],way[i+1])
+                #print
+                #if(t=="D"):
+                    #seq2=[]
+                    #for j in range(way[i+1][3]+1):
+                        #seq2.append(seq[j])
+                    #print way[i+1][3],seq2
+                    #if(len(seq)>0):
+                        #bp.append(BasePairs(seq2,TraceBack(Mat(seq2),seq2)))
+                if(t=="C"):
                     bp.append([way[i][1],seq[way[i][1]],way[i][0],seq[way[i][0]]])
+ 		elif(t=="B"):
+                    bp.append([way[i][0],seq[way[i][0]]])
+		elif(t=="A"):
+                    bp.append([way[i][1],seq[way[i][1]]])
+		#elif(t=="C"):
+                    #bp.append([way[i][1],seq[way[i][1]],way[i][0],seq[way[i][0]]])
 		elif(t=="D"):
                     seq2=[]
                     for j in range(way[i+1][3]+1):
                         seq2.append(seq[j])
-                    print way[i+1][3],seq2
-                    if(len(seq)>0):
+                    print way[i+1][3],i,seq2
+                    if(len(seq2)>0):
                         bp.append(BasePairs(seq2,TraceBack(Mat(seq2),seq2)))
         save(bp)
 	return bp	
@@ -144,10 +152,10 @@ def BasePairs(seq,way):
 #               #
 #################
 
-f=open("Sequence1.txt","r")
+f=open("Sequence3.txt","r")
 seq=f.readline()
 seq=seq.rstrip('\n')
 print seq
-print Mat(seq)
-print TraceBack(Mat(seq),seq)
+#print Mat(seq)
+#print TraceBack(Mat(seq),seq)
 print BasePairs(seq,TraceBack(Mat(seq),seq))
