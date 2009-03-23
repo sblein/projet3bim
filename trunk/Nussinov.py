@@ -52,12 +52,12 @@ def Mat(seq):
 	return mat
 
 # Fonction qui retrouve le chemin emprunte pour remplir la derniere case	
-def TraceBack(mat,seq):	
+def TraceBack(mat,seq,indi,indj):	
         T=len(seq)
 	way=[]
-	way.append([0,T-1,mat[0,T-1]])
-	j=T-1
-	i=0
+	#way.append([indi,indj,mat[indi,indj]])
+	j=indj
+	i=indi
 	while(j>0 and i<j):
 		dep=mat[i,j]
 		A=mat[i,j-1]
@@ -72,17 +72,22 @@ def TraceBack(mat,seq):
                             D=mat[i,k]+mat[k+1,j]
                             kl=k
                 if dep==A:
-                    way.append([i,j-1,mat[i,j-1]])
+                    if(mat[i,j-1]!=0):
+                        way.append([i,j-1,mat[i,j-1]])
                     j-=1
 		elif dep==B :
-                    way.append([i+1,j,mat[i+1,j]])
+                    if(mat[i+1,j]!=0):
+                        way.append([i+1,j,mat[i+1,j]])
                     i+=1
 		elif(dep==C):
-                    way.append([i+1,j-1,mat[i+1,j-1]])
+                    if(mat[i+1,j-1]!=0):
+                        way.append([i+1,j-1,mat[i+1,j-1]])
                     i+=1
                     j-=1
 		elif(dep==D):
-                    way.append([i+kl+1,j,mat[i+kl+1,j],int(kl)])
+                    if(mat[i+kl+1,j]!=0):
+                        way.append([i+kl+1,j,mat[i+kl+1,j],int(kl)])
+                    way.append(TraceBack(mat,seq,i,i+kl+1))
                     i+=kl+1
 	return way
 
@@ -118,6 +123,7 @@ def save(bp):
 def BasePairs(seq,way):		
 	bp=[]
 	for i in range(len(way)-1):
+                print way[i],way[i+1]
                 t=Transfo(way[i],way[i+1])
                 #print
                 #if(t=="D"):
@@ -156,6 +162,6 @@ f=open("Sequence3.txt","r")
 seq=f.readline()
 seq=seq.rstrip('\n')
 print seq
-#print Mat(seq)
-#print TraceBack(Mat(seq),seq)
-print BasePairs(seq,TraceBack(Mat(seq),seq))
+print Mat(seq)
+print TraceBack(Mat(seq),seq,0,len(seq)-1)
+#print BasePairs(seq,TraceBack(Mat(seq),seq,0,len(seq)-1))
