@@ -55,7 +55,7 @@ def Mat(seq):
 def TraceBack(mat,seq,indi,indj):	
         T=len(seq)
 	way=[]
-	#way.append([indi,indj,mat[indi,indj]])
+	way.append([indi,indj,mat[indi,indj],0])
 	j=indj
 	i=indi
 	while(j>0 and i<j):
@@ -65,29 +65,29 @@ def TraceBack(mat,seq,indi,indj):
 		C=mat[i+1,j-1]+Match2(seq[i],seq[j])
 		kl=1
                 D=0
-                if(i<T-2):
+                if(i<T-kl-1):
                     D=mat[i,i+1]+mat[i+2,j]
                     for k in range(i+2,j,1):
 			if(D>mat[i,k]+mat[k+1,j]):
                             D=mat[i,k]+mat[k+1,j]
                             kl=k
-                if dep==A:
-                    if(mat[i,j-1]!=0):
-                        way.append([i,j-1,mat[i,j-1]])
-                    j-=1
-		elif dep==B :
-                    if(mat[i+1,j]!=0):
-                        way.append([i+1,j,mat[i+1,j]])
+		if dep==B :
+                    #if(mat[i+1,j]!=0):
+                    way.append([i+1,j,mat[i+1,j],0])
                     i+=1
-		elif(dep==C):
-                    if(mat[i+1,j-1]!=0):
-                        way.append([i+1,j-1,mat[i+1,j-1]])
+		elif dep==A:
+                    #if(mat[i,j-1]!=0):
+                    way.append([i,j-1,mat[i,j-1],0])
+                    j-=1
+                elif(dep==C):
+                    #if(mat[i+1,j-1]!=0):
+                    way.append([i+1,j-1,mat[i+1,j-1],0])
                     i+=1
                     j-=1
 		elif(dep==D):
-                    if(mat[i+kl+1,j]!=0):
-                        way.append([i+kl+1,j,mat[i+kl+1,j],int(kl)])
-                    way.append(TraceBack(mat,seq,i,i+kl+1))
+                    #if(mat[i+kl+1,j]!=0):
+                    way.append([i+kl+1,j,mat[i+kl+1,j],int(kl)])
+                    way.append(TraceBack(mat,seq,i,i+kl))
                     i+=kl+1
 	return way
 
@@ -123,7 +123,7 @@ def save(bp):
 def BasePairs(seq,way):		
 	bp=[]
 	for i in range(len(way)-1):
-                print way[i],way[i+1]
+                print i,way[i],way[i+1]
                 t=Transfo(way[i],way[i+1])
                 #print
                 #if(t=="D"):
@@ -145,9 +145,9 @@ def BasePairs(seq,way):
                     seq2=[]
                     for j in range(way[i+1][3]+1):
                         seq2.append(seq[j])
-                    print way[i+1][3],i,seq2
+                    #print way[i+1][3],i,seq2
                     if(len(seq2)>0):
-                        bp.append(BasePairs(seq2,TraceBack(Mat(seq2),seq2)))
+                        bp.append(BasePairs(seq2,TraceBack(Mat(seq2),seq2,i,i+way[i+1][3])))
         save(bp)
 	return bp	
 			
@@ -158,7 +158,7 @@ def BasePairs(seq,way):
 #               #
 #################
 
-f=open("Sequence3.txt","r")
+f=open("Sequence2.txt","r")
 seq=f.readline()
 seq=seq.rstrip('\n')
 print seq
