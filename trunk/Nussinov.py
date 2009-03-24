@@ -62,34 +62,76 @@ def TraceBack(mat,seq,indi,indj):
 		dep=mat[i,j]
 		A=mat[i,j-1]
 		B=mat[i+1,j]
-		C=mat[i+1,j-1]+Match2(seq[i],seq[j])
+		C=mat[i+1,j-1]+Match2(seq[i],seq[j])            
 		kl=1
                 D=0
+
                 if(i<T-kl-1):
                     D=mat[i,i+1]+mat[i+2,j]
                     for k in range(i+2,j,1):
 			if(D>mat[i,k]+mat[k+1,j]):
                             D=mat[i,k]+mat[k+1,j]
                             kl=k
-		if dep==B :
-                    #if(mat[i+1,j]!=0):
-                    way.append([i+1,j,mat[i+1,j],0])
-                    i+=1
-		elif dep==A:
-                    #if(mat[i,j-1]!=0):
-                    way.append([i,j-1,mat[i,j-1],0])
-                    j-=1
-                elif(dep==C):
-                    #if(mat[i+1,j-1]!=0):
-                    way.append([i+1,j-1,mat[i+1,j-1],0])
-                    i+=1
-                    j-=1
-		elif(dep==D):
-                    #if(mat[i+kl+1,j]!=0):
-                    way.append([i+kl+1,j,mat[i+kl+1,j],int(kl)])
-                    way.append(TraceBack(mat,seq,i,i+kl))
-                    i+=kl+1
+
+                if Match2(seq[i],seq[j])!=0:  
+
+                    if dep==B :
+                        way.append([i+1,j,mat[i+1,j],"B"])
+                        i+=1
+                    elif dep==A:
+                        way.append([i,j-1,mat[i,j-1],"A"])
+                        j-=1
+					elif(dep==C):
+                        way.append([i+1,j-1,mat[i+1,j-1],"C"])
+                        i+=1
+                        j-=1
+                    elif(dep==D):
+                        way.append([i+kl+1,j,mat[i+kl+1,j],"D",int(kl)])
+                        way.append(TraceBack(mat,seq,i,i+kl))
+                        i+=kl+1
+                else:
+                    print "else",A,B,C,D,dep
+                    if dep==B :
+                        way.append([i+1,j,mat[i+1,j],"B"])
+                        i+=1
+                    elif dep==A:
+                        way.append([i,j-1,mat[i,j-1],"A"])
+                        j-=1
+                    elif(dep==C):
+                        way.append([i+1,j-1,mat[i+1,j-1],"C"])
+                        i+=1
+                        j-=1
+                    elif(dep==D):
+                        if(mat[i+kl+1,j]!=0):
+                            way.append([i+kl+1,j,mat[i+kl+1,j],"D",int(kl)])
+                            way.append(TraceBack(mat,seq,i,i+kl))
+                        i+=kl+1
 	return way
+
+# Fonction qui permet de transformer une liste de listes de chemin en une simple liste de way
+def modifway(way):
+    list=[]
+    for x in way:
+        if(type(x[0])==type(list)):
+            for y in x:
+                list.append(y)
+        else:
+            list.append(x)
+    return list
+
+def modifliste(way):
+    list=[]
+    list=modifway(way)
+    cpt=len(list)
+    while(cpt!=0):
+        cpt=len(list)
+        for i in range(len(list)):
+            if(type(list[i][0])==type(1)):
+                cpt-=1
+                list=modifway(list)
+    return list
+
+        
 
 # Fonction qui retrouve la transfo qui a eu lieu entre 2 cases
 def Transfo(u,v):
@@ -123,31 +165,37 @@ def save(bp):
 def BasePairs(seq,way):		
 	bp=[]
 	for i in range(len(way)-1):
-                print i,way[i],way[i+1]
-                t=Transfo(way[i],way[i+1])
-                #print
-                #if(t=="D"):
-                    #seq2=[]
-                    #for j in range(way[i+1][3]+1):
-                        #seq2.append(seq[j])
-                    #print way[i+1][3],seq2
-                    #if(len(seq)>0):
-                        #bp.append(BasePairs(seq2,TraceBack(Mat(seq2),seq2)))
-                if(t=="C"):
-                    bp.append([way[i][1],seq[way[i][1]],way[i][0],seq[way[i][0]]])
- 		elif(t=="B"):
-                    bp.append([way[i][0],seq[way[i][0]]])
-		elif(t=="A"):
-                    bp.append([way[i][1],seq[way[i][1]]])
-		#elif(t=="C"):
-                    #bp.append([way[i][1],seq[way[i][1]],way[i][0],seq[way[i][0]]])
-		elif(t=="D"):
-                    seq2=[]
-                    for j in range(way[i+1][3]+1):
-                        seq2.append(seq[j])
-                    #print way[i+1][3],i,seq2
-                    if(len(seq2)>0):
-                        bp.append(BasePairs(seq2,TraceBack(Mat(seq2),seq2,i,i+way[i+1][3])))
+		t=way[i+1][3]
+		val=way[i][2]
+		val2=way[i+1][2]
+		
+		if(t=="D"):# and val != 0):
+			ind1=i+1
+			ind2=ind1+way[i+1][4]+2
+			t=way[ind2][3]
+			val=way[ind1][2]
+			val2=way[ind2][2]
+			if(t=="B" and val !=0):
+				bp.append([way[ind1][0],seq[way[ind1][0]]])
+			elif(t=="A" and val!=0):
+				bp.append([way[ind2][1],seq[way[ind2][1]]])
+			elif(t=="C" and val!=0 and val2!=0):# and (way[ind1][1]-way[ind1][0]-1)>TAILLE_BOUCLE):
+				bp.append([way[ind1][1],seq[way[ind1][1]],way[ind1][0],seq[way[ind1][0]]])
+
+		elif(t=="B" and val !=0):
+			bp.append([way[i][0],seq[way[i][0]]])
+			
+		elif(t=="A" and val!=0):
+			bp.append([way[i][1],seq[way[i][1]]])
+			
+		elif(t=="C" and val!=0):
+			bp.append([way[i][1],seq[way[i][1]],way[i][0],seq[way[i][0]]])
+			
+			if(val2==0 and way[i+1][0]==way[i+1][1]):
+				bp.append([way[i+1][1],seq[way[i+1][1]]])
+                    
+		#print bp
+
         save(bp)
 	return bp	
 			
@@ -158,10 +206,13 @@ def BasePairs(seq,way):
 #               #
 #################
 
-f=open("Sequence2.txt","r")
+f=open("Sequence3.txt","r")
 seq=f.readline()
 seq=seq.rstrip('\n')
 print seq
 print Mat(seq)
-print TraceBack(Mat(seq),seq,0,len(seq)-1)
+TB=TraceBack(Mat(seq),seq,0,len(seq)-1)
+way=modifliste(TB)
+print "\nway : \n",way
+print "\nAssociations : \n",BasePairs(seq,way)
 #print BasePairs(seq,TraceBack(Mat(seq),seq,0,len(seq)-1))
