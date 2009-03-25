@@ -32,6 +32,7 @@ def max(list):
     return max
 
 # Calcule la matrice inferieure suivant l'algorithme de Nussinov
+# On remplit d'abord la 1ere diagonale superieure, puis celle du dessus et ainsi de suite
 def Mat(seq):
 	T=len(seq)
 	mat=numpy.zeros((T,T))
@@ -59,7 +60,8 @@ def TraceBack(mat,seq,indi,indj):
 	way.append([indi,indj,mat[indi,indj],0])
 	j=indj
 	i=indi
-	while(j>0 and i<j):
+	while(j>0 and i<j): # On se deplace dans la matrice superieure
+                # Calcul du passage de l'etape i a l'etape i+1
 		dep=mat[i,j]
 		A=mat[i,j-1]
 		B=mat[i+1,j]
@@ -72,10 +74,11 @@ def TraceBack(mat,seq,indi,indj):
                     for k in range(i+2,j,1):
 			if(D>mat[i,k]+mat[k+1,j]):
                             D=mat[i,k]+mat[k+1,j]
-                            kl=k
+                            #kl=k
 
+                #print Match2(seq[i],seq[j])
                 if Match2(seq[i],seq[j])!=0:  
-
+                    #print "pas else ",A,B,C,D,dep
                     if dep==B :
                         way.append([i+1,j,mat[i+1,j],"B"])
                         i+=1
@@ -91,18 +94,19 @@ def TraceBack(mat,seq,indi,indj):
                         way.append(TraceBack(mat,seq,i,i+kl))
                         i+=kl+1
                 else:
-                    print "else",A,B,C,D,dep
-                    if dep==B :
-                        way.append([i+1,j,mat[i+1,j],"B"])
-                        i+=1
-                    elif dep==A:
-                        way.append([i,j-1,mat[i,j-1],"A"])
-                        j-=1
-                    elif(dep==C):
-                        way.append([i+1,j-1,mat[i+1,j-1],"C"])
-                        i+=1
-                        j-=1
-                    elif(dep==D):
+                    #print "else",A,B,C,D,dep
+                    #if dep==B :
+                        #way.append([i+1,j,mat[i+1,j],"B"])
+                        #i+=1
+                    #elif dep==A:
+                        #way.append([i,j-1,mat[i,j-1],"A"])
+                        #j-=1
+                    #if(dep==C):
+                        #way.append([i+1,j-1,mat[i+1,j-1],"C"])
+                        #i+=1
+                        #j-=1
+                    
+                    if(dep==D):
                         if(mat[i+kl+1,j]!=0):
                             way.append([i+kl+1,j,mat[i+kl+1,j],"D",int(kl)])
                             way.append(TraceBack(mat,seq,i,i+kl))
@@ -179,11 +183,13 @@ def BasePairs(seq,way):
 			val2=way[ind2][2]
                         print way[ind1][1],way[ind1][0],way[ind1][1]-way[ind1][0]-1
 			if(t=="B" and val !=0):
-				bp.append([way[ind1][0],seq[way[ind1][0]]])
+                            bp.append([way[ind1][0],seq[way[ind1][0]]])
 			elif(t=="A" and val!=0):
-				bp.append([way[ind2][1],seq[way[ind2][1]]])
+                            bp.append([way[ind2][1],seq[way[ind2][1]]])
 			elif(t=="C" and val!=0):# and val2!=0):# and (way[ind1][1]-way[ind1][0]-1)>TAILLE_BOUCLE):
-				bp.append([way[ind1][1],seq[way[ind1][1]],way[ind1][0],seq[way[ind1][0]]])
+                            bp.append([way[ind1][1],seq[way[ind1][1]],way[ind1][0],seq[way[ind1][0]]])
+                        elif(t=="C" and val==0 and val2!=0):# and val2!=0):# and (way[ind1][1]-way[ind1][0]-1)>TAILLE_BOUCLE):
+                            bp.append([way[ind1][1],seq[way[ind1][1]],way[ind1][0],seq[way[ind1][0]]])
 
 		elif(t=="B" and val !=0):
 			bp.append([way[i][0],seq[way[i][0]]])
@@ -197,7 +203,7 @@ def BasePairs(seq,way):
 			if(val2==0 and way[i+1][0]==way[i+1][1]):
 				bp.append([way[i+1][1],seq[way[i+1][1]]])
                     
-		#print bp
+		print bp
 
         save(bp)
 	return bp	
@@ -209,7 +215,7 @@ def BasePairs(seq,way):
 #               #
 #################
 
-f=open("Sequence4.txt","r")
+f=open("Sequence2.txt","r")
 seq=f.readline()
 seq=seq.rstrip('\n')
 print seq
