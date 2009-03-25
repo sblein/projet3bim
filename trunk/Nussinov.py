@@ -2,6 +2,7 @@ import numpy
 APP_AU=-3
 APP_GC=-4
 APP_GU=-2
+TAILLE_BOUCLE=3
 
 # Matrice de score des appariements possibles
 def Match2(a,b):
@@ -81,7 +82,7 @@ def TraceBack(mat,seq,indi,indj):
                     elif dep==A:
                         way.append([i,j-1,mat[i,j-1],"A"])
                         j-=1
-					elif(dep==C):
+                    elif(dep==C):
                         way.append([i+1,j-1,mat[i+1,j-1],"C"])
                         i+=1
                         j-=1
@@ -168,18 +169,20 @@ def BasePairs(seq,way):
 		t=way[i+1][3]
 		val=way[i][2]
 		val2=way[i+1][2]
-		
+		print t,way[i],way[i+1]
+
 		if(t=="D"):# and val != 0):
 			ind1=i+1
 			ind2=ind1+way[i+1][4]+2
 			t=way[ind2][3]
 			val=way[ind1][2]
 			val2=way[ind2][2]
+                        print way[ind1][1],way[ind1][0],way[ind1][1]-way[ind1][0]-1
 			if(t=="B" and val !=0):
 				bp.append([way[ind1][0],seq[way[ind1][0]]])
 			elif(t=="A" and val!=0):
 				bp.append([way[ind2][1],seq[way[ind2][1]]])
-			elif(t=="C" and val!=0 and val2!=0):# and (way[ind1][1]-way[ind1][0]-1)>TAILLE_BOUCLE):
+			elif(t=="C" and val!=0):# and val2!=0):# and (way[ind1][1]-way[ind1][0]-1)>TAILLE_BOUCLE):
 				bp.append([way[ind1][1],seq[way[ind1][1]],way[ind1][0],seq[way[ind1][0]]])
 
 		elif(t=="B" and val !=0):
@@ -188,7 +191,7 @@ def BasePairs(seq,way):
 		elif(t=="A" and val!=0):
 			bp.append([way[i][1],seq[way[i][1]]])
 			
-		elif(t=="C" and val!=0):
+		elif(t=="C" and val!=0):# and (way[i][1]-way[i][0]-1)>TAILLE_BOUCLE):
 			bp.append([way[i][1],seq[way[i][1]],way[i][0],seq[way[i][0]]])
 			
 			if(val2==0 and way[i+1][0]==way[i+1][1]):
@@ -206,7 +209,7 @@ def BasePairs(seq,way):
 #               #
 #################
 
-f=open("Sequence3.txt","r")
+f=open("Sequence4.txt","r")
 seq=f.readline()
 seq=seq.rstrip('\n')
 print seq
