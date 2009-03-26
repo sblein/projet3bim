@@ -63,57 +63,37 @@ def TraceBack(mat,seq,indi,indj):
 	while(j>0 and i<j): # On se deplace dans la matrice superieure
                 # Calcul du passage de l'etape i a l'etape i+1
 		dep=mat[i,j]
+
 		A=mat[i,j-1]
 		B=mat[i+1,j]
 		C=mat[i+1,j-1]+Match2(seq[i],seq[j])            
-		kl=1
-                D=0
+                D=0 # En attente de calcul
 
-                if(i<j-1):
-                    D=mat[i,i+1]+mat[i+2,j]
-                    for k in range(i+2,j,1):
-			if(D>mat[i,k]+mat[k+1,j]):
-                            D=mat[i,k]+mat[k+1,j]
-                            #kl=k
+                kl=1
+                D=mat[i,i+1]+mat[i+1,j]
+                for k in range(j-i-1,1,-1):
+                    if((mat[i,i+k]+mat[i+k,j])== dep):
+                        D=mat[i,i+k]+mat[i+k,j]
+                        kl=k
+                        #print D,kl
 
-                #print Match2(seq[i],seq[j])
-                if Match2(seq[i],seq[j])!=0:  
-                    #print "pas else ",A,B,C,D,dep
-                    if dep==B :
-                        way.append([i+1,j,mat[i+1,j],"B"])
-                        i+=1
-                    elif dep==A:
-                        way.append([i,j-1,mat[i,j-1],"A"])
-                        j-=1
-                    elif(dep==C):
-                        way.append([i+1,j-1,mat[i+1,j-1],"C"])
-                        i+=1
-                        j-=1
-                    elif(dep==D):
-                        way.append([i+kl+1,j,mat[i+kl+1,j],"D",int(kl)])
-                        #print way
-                        way.append(TraceBack(mat,seq,0,i+kl))
-                        #print way
-                        #i+=kl+1
-                        i+=2
-                else:
-                    #print "else",A,B,C,D,dep
-                    #if dep==B :
-                        #way.append([i+1,j,mat[i+1,j],"B"])
-                        #i+=1
-                    #elif dep==A:
-                        #way.append([i,j-1,mat[i,j-1],"A"])
-                        #j-=1
-                    #if(dep==C):
-                        #way.append([i+1,j-1,mat[i+1,j-1],"C"])
-                        #i+=1
-                        #j-=1
-                    
-                    if(dep==D):
-                        if(mat[i+kl+1,j]!=0):
-                            way.append([i+kl+1,j,mat[i+kl+1,j],"D",int(kl)])
-                            way.append(TraceBack(mat,seq,i,i+kl))
-                        i+=kl+1
+                #print i,j,A,B,C,D,dep
+
+                if(dep == B):
+                    way.append([i+1,j,mat[i+1,j],"B",0])
+                    i=i+1                    
+                elif(dep == A):
+                    way.append([i,j-1,mat[i,j-1],"A",0])
+                    j-=1
+                elif(dep == C):
+                    way.append([i+1,j-1,mat[i+1,j-1],"C",0])
+                    i+=1
+                    j-=1
+                elif(dep == D):
+                    way.append([i+kl,j,mat[i+kl,j],"D",kl])
+                    way.append(TraceBack(mat,seq,i,i+kl))
+                    i=i+kl                
+
 	return way
 
 # Fonction qui permet de transformer une liste de listes de chemin en une simple liste de way
@@ -153,16 +133,16 @@ def Transfo(u,v):
 		return "D"
 
 def save(bp):
-    f=open("Appariement.txt","a")
+    f=open("Appariement.txt","w")
     list=[]
     for i in range(len(bp)):
         #print i
-        if type(bp[i][0])==list:
-            save(bp[i])
-        else:
+        #if type(bp[i][0])==list:
+            #save(bp[i])
+        #else:
             str=[]
             if(len(bp[i])==4):
-                str="%s "%bp[i][1]+"%d"%bp[i][0]+" %d"%bp[i][2]+" %s"%bp[i][3]+"\n"
+                str="%s "%bp[i][1]+"%d"%bp[i][0]+" %d"%bp[i][3]+" %s"%bp[i][2]+"\n"
             elif (len(bp[i])==2):
                 str="%s "%bp[i][1]+"%d"%bp[i][0]+"\n" 
             f.writelines(str)
@@ -172,41 +152,27 @@ def save(bp):
 # Fonction qui retourne les bases qui sont appariees dans la structure de plus basse energie
 def BasePairs(seq,way):		
 	bp=[]
-	for i in range(len(way)-1):
-		t=way[i+1][3]
-		val=way[i][2]
-		val2=way[i+1][2]
-		print t,way[i],way[i+1]
 
-		if(t=="D"):# and val != 0):
-			ind1=i+1
-			ind2=ind1+way[i+1][4]+2
-			t=way[ind2][3]
-			val=way[ind1][2]
-			val2=way[ind2][2]
-                        print way[ind1][1],way[ind1][0],way[ind1][1]-way[ind1][0]-1
-			if(t=="B" and val !=0):
-                            bp.append([way[ind1][0],seq[way[ind1][0]]])
-			elif(t=="A" and val!=0):
-                            bp.append([way[ind2][1],seq[way[ind2][1]]])
-			elif(t=="C" and val!=0):# and val2!=0):# and (way[ind1][1]-way[ind1][0]-1)>TAILLE_BOUCLE):
-                            bp.append([way[ind1][1],seq[way[ind1][1]],way[ind1][0],seq[way[ind1][0]]])
-                        elif(t=="C" and val==0 and val2!=0):# and val2!=0):# and (way[ind1][1]-way[ind1][0]-1)>TAILLE_BOUCLE):
-                            bp.append([way[ind1][1],seq[way[ind1][1]],way[ind1][0],seq[way[ind1][0]]])
-
-		elif(t=="B" and val !=0):
-			bp.append([way[i][0],seq[way[i][0]]])
-			
-		elif(t=="A" and val!=0):
-			bp.append([way[i][1],seq[way[i][1]]])
-			
-		elif(t=="C" and val!=0):# and (way[i][1]-way[i][0]-1)>TAILLE_BOUCLE):
-			bp.append([way[i][1],seq[way[i][1]],way[i][0],seq[way[i][0]]])
-			
-			if(val2==0 and way[i+1][0]==way[i+1][1]):
-				bp.append([way[i+1][1],seq[way[i+1][1]]])
-                    
-		#print bp
+        for i in range(len(way)-1):
+            t=way[i+1][3]
+            val=way[i][2]
+            
+            if t=="C" and val!=0:
+                bp.append([way[i][0],seq[way[i][0]],seq[way[i][1]],way[i][1]])
+            if t=="D":
+                ind1=i+1
+                ind2=ind1+1
+                val2=1
+                while val2!=0:
+                    val2=way[ind2][2]
+                    ind2+=1
+                #ind2+=1
+                print way[ind1][4]
+                print way[ind1],way[ind2]
+                if way[ind2][3]=="C":# and way[i][3]!="D":
+                    bp.append([way[ind1][0],seq[way[ind1][0]],seq[way[ind1][1]],way[ind1][1]])
+                
+                
 
         save(bp)
 	return bp	
