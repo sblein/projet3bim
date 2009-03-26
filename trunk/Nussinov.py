@@ -91,8 +91,11 @@ def TraceBack(mat,seq,indi,indj):
                         j-=1
                     elif(dep==D):
                         way.append([i+kl+1,j,mat[i+kl+1,j],"D",int(kl)])
-                        way.append(TraceBack(mat,seq,i,i+kl))
-                        i+=kl+1
+                        #print way
+                        way.append(TraceBack(mat,seq,0,i+kl))
+                        #print way
+                        #i+=kl+1
+                        i+=2
                 else:
                     #print "else",A,B,C,D,dep
                     #if dep==B :
@@ -203,7 +206,7 @@ def BasePairs(seq,way):
 			if(val2==0 and way[i+1][0]==way[i+1][1]):
 				bp.append([way[i+1][1],seq[way[i+1][1]]])
                     
-		print bp
+		#print bp
 
         save(bp)
 	return bp	
@@ -224,4 +227,3 @@ TB=TraceBack(Mat(seq),seq,0,len(seq)-1)
 way=modifliste(TB)
 print "\nway : \n",way
 print "\nAssociations : \n",BasePairs(seq,way)
-#print BasePairs(seq,TraceBack(Mat(seq),seq,0,len(seq)-1))
