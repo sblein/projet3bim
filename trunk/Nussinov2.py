@@ -201,7 +201,7 @@ def tri_liste(bp):
 #               #
 #################
 
-f=open("Sequence4.txt","r")
+f=open("Sequence3.txt","r")
 seq=f.readline()
 seq=seq.rstrip('\n')
 print seq
