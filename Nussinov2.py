@@ -136,17 +136,12 @@ def save(bp):
     f=open("Appariement.txt","w")
     list=[]
     for i in range(len(bp)):
-        #print i
-        #if type(bp[i][0])==list:
-            #save(bp[i])
-        #else:
-            str=[]
-            if(len(bp[i])==4):
-                str="%s "%bp[i][1]+"%d"%bp[i][0]+" %d"%bp[i][3]+" %s"%bp[i][2]+"\n"
-            elif (len(bp[i])==2):
-                str="%s "%bp[i][1]+"%d"%bp[i][0]+"\n" 
-            f.writelines(str)
-    #print list
+        str=[]
+        if(len(bp[i])==4):
+            str="%d "%bp[i][0]+"%s"%bp[i][1]+" %s"%bp[i][2]+" %d"%bp[i][3]+"\n"
+        elif (len(bp[i])==2):
+            str="%d "%bp[i][0]+"%s"%bp[i][1]+"\n" 
+        f.writelines(str)
     
 
 # Fonction qui retourne les bases qui sont appariees dans la structure de plus basse energie
@@ -170,12 +165,34 @@ def BasePairs(seq,way):
                 print way[ind1][4]
                 print way[ind1],way[ind2]
                 if way[ind2][3]=="C":# and way[i][3]!="D":
-                    bp.append([way[ind1][0],seq[way[ind1][0]],seq[way[ind1][1]],way[ind1][1]])
-                
-                
+                    bp.append([way[ind1][0],seq[way[ind1][0]],seq[way[ind1][1]],way[ind1][1]])               
 
-        save(bp)
-	return bp	
+        # Il reste a ajouter dans la liste les bases non appariees
+        list_temp=[]
+        for i in range(len(bp)):
+            list_temp.append(bp[i][0])
+            list_temp.append(bp[i][3])
+
+        for j in range(len(seq)):
+            if(list_temp.count(j)==0):
+                bp.append([j,seq[j]])
+	return bp
+
+def tri_liste(bp):
+    list=[]
+    tmp=[]
+    for i in range(len(bp)):
+        tmp.append(bp[i][0])
+    tmp.sort()
+
+    for j in range(len(tmp)):
+        for i in range(len(bp)):
+            if(bp[i][0]==tmp[j]):
+                list.append(bp[i])
+
+    return list
+        
+
 			
 		
 #################
@@ -184,12 +201,16 @@ def BasePairs(seq,way):
 #               #
 #################
 
-f=open("Sequence2.txt","r")
+f=open("Sequence4.txt","r")
 seq=f.readline()
 seq=seq.rstrip('\n')
 print seq
 print Mat(seq)
 TB=TraceBack(Mat(seq),seq,0,len(seq)-1)
 way=modifliste(TB)
+BP=BasePairs(seq,way)
+BPt=tri_liste(BP)
 print "\nway : \n",way
-print "\nAssociations : \n",BasePairs(seq,way)
+print "\nAssociations : \n",BP
+print "\nTri liste : \n",BPt
+save(BPt)
