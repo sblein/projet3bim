@@ -2,38 +2,14 @@ import wx
 
 from graph import *
 
-#from Nussinov import *
+from Nussinov2 import *
 
-seq=''
 seqTest='GGGCUAUUAGCUCAGUUGGUUAGAGCGCACCCCUGAUAAGGGUGAGGUCGCUGAUUCGAAUUCAGCAUAGCCCA'
-
 
 color='light grey'
 
 w=600
 h=250
-
-
-
-class Pan(wx.Panel):
-
-    def __init__(self,parent,id,W,H):
-        wx.Panel.__init__(self,parent,id)
-        self.SetSize((W,H))
-        self.SetBackgroundColour(color)
-        w,h = self.GetClientSize()
-        self.buffer = wx.EmptyBitmap(w,h)
-        
-    def draw_buffer(self,l,lg):
-        dc = wx.BufferedDC(wx.ClientDC(self),self.buffer)
-        dc.Clear()
-        dc.SetPen(wx.Pen("black",1))
-        x=5
-        dc.DrawCircle(10,10,2)
-        for i in range(len(l)):
-            dc.DrawText("%s"%l[i][0],x,10)
-            x+=2
-            print l[i][0]
 
 #Arc de cercle:
 #dc.DrawArc(x1,y1,x2,y2,xp,yp) centred on (xc, yc), with starting point (x1, y1) and ending at (x2, y2)
@@ -45,15 +21,29 @@ class MyDraw(wx.Frame):
     def __init__( self, parent, ID, title, pos=wx.DefaultPosition,size=wx.DefaultSize, style=wx.DEFAULT_FRAME_STYLE):
         wx.Frame.__init__(self, parent, ID, title, pos, size, style)
         self.SetAutoLayout(True)
+        self.init_buffer()
        # self.SetBackgroundColour(color)
+        wi,hi = self.GetClientSize()
 
-        w,h = self.GetClientSize()
-        self.pan = Pan(self,-1,w,h)
-
+    def init_buffer(self):
+        wi,hi = self.GetClientSize()
+        self.buffer = wx.EmptyBitmap(wi,hi)
+        dc = wx.BufferedDC(wx.ClientDC(self),self.buffer)
+        
     def draw(self, l,lg):
-        self.pan.draw_buffer(l,lg)
-       # print "test"
-
+        wi,hi = self.GetClientSize()
+        self.buffer = wx.EmptyBitmap(wi,hi)
+        dc = wx.BufferedDC(wx.ClientDC(self),self.buffer)
+        dc.Clear()
+      #  dc.SetBrush(wx.Brush("black"))
+       # dc.SetPen(wx.Pen("black",1))
+        x=5
+        dc.DrawCircle(10,10,10)
+        dc.DrawLine(10,10,20,20)
+        for i in range(len(l)):
+            dc.DrawText("%s"%l[i][0],x,10)
+            x+=2  
+            print l[i][0]
        
 
 class MyFrame(wx.Frame):
@@ -64,9 +54,7 @@ class MyFrame(wx.Frame):
         self.SetBackgroundColour(color)
         self.menu()
         self.boite()
-
-        w,h = self.GetClientSize()
-       # self.seq=Seq(self,-1,w,h)
+        self.winD=0
 
 
 #MENU
@@ -96,34 +84,31 @@ class MyFrame(wx.Frame):
 #BOITES DE DIALOGUE
     def boite(self):
 
-        w,h = self.GetClientSize()
+        wi,hi = self.GetClientSize()
 
-        #cb=wx.StaticText(self,2,"Entrer votre sequence de test",(2*w/3,50),(300,60),wx.ALIGN_CENTRE)
-        
-       # cb=wx.StaticText(self,1,"Simulation du repliement plan de l'ARN",(100,20),(300,60),wx.ALIGN_CENTRE)
-       # box.Add(cb,1,wx.ALL,1)
-
-        cb=wx.StaticText(self,2,"Entrez votre sequence de test",(20,20),(300,100),wx.ALIGN_CENTRE)
+        cb=wx.StaticText(self,2,"Entrez votre sequence de test",(20,20),(300,90),wx.ALIGN_CENTRE)
         myfont3 = wx.Font(16, wx.FONTFAMILY_DECORATIVE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Verdana")
         cb.SetFont(myfont3)
 
 
-        txt=wx.TextCtrl(self,30,seqTest,pos=(0,h/3),size=(3*w/4,150),style=wx.TE_PROCESS_ENTER |wx.TE_MULTILINE )
+        txt=wx.TextCtrl(self,30,'',pos=(0,hi/3),size=(3*wi/4-10,2*hi/3),style=wx.TE_PROCESS_ENTER |wx.TE_MULTILINE )
         self.Bind(wx.EVT_TEXT_ENTER,self.textEnter,txt)
         
-        b=wx.Button(self,-1,"Test",pos=(3*w/4,h/3),size=(140,40))
+        b=wx.Button(self,-1,"Test",pos=(3*wi/4-10,hi/3),size=(160,50))
         self.Bind(wx.EVT_BUTTON,self.seqTest,b)
         
-        b=wx.Button(self,-1,"Ouvrir une sequence",pos=(3*w/4,h/3+50),size=(140,40))
+        b=wx.Button(self,-1,"Ouvrir une sequence",pos=(3*wi/4-10,hi/3+50),size=(160,50))
         self.Bind(wx.EVT_BUTTON,self.OnOpen,b)
 
-        b=wx.Button(self,-1,"Quitter",pos=(3*w/4,h/3+100),size=(140,40))
+        b=wx.Button(self,-1,"Quitter",pos=(3*wi/4-10,hi/3+100),size=(160,50))
         self.Bind(wx.EVT_BUTTON,self.kill,b)
 
 
 #FERMETURE DE LA FENETRE
     def kill(self,event):
         self.Destroy()
+        if self.winD!=0:
+            self.winD.Destroy()
 
 
 #OUVERTURE D'UN FICHIER CONTENANT UNE SEQUENCE
@@ -138,16 +123,23 @@ class MyFrame(wx.Frame):
         if retour == wx.ID_OK and fichier != "":
             seq=''
             f=open(chemin,"r")
-            for l in f:
-                seq+=l.rstrip('\n')
+            seq=f.readline()
+            seq=seq.rstrip('\n')
+            #for l in f:
+             #   seq+=l.rstrip('\n')
             f.close()
+           # while seq[len(seq)-1]==' ':
+            #    seq.rstrip(' ')
+            #for i in range(len(seq)):
+           #     print seq[i]
             k=self.testSeq(seq)
             if k==-1:
                 dlg = wx.MessageDialog(self,"Vous devez recharger un sequence correcte \n composee de A, U, C et G",
                                        "Sequence non correcte", style = wx.OK)
                 retour = dlg.ShowModal()
+            else:
                 dlg.Destroy()
-        self.Nuss()
+                self.Nuss(seq)
         #print seq
 
 
@@ -158,6 +150,7 @@ class MyFrame(wx.Frame):
 
 #RECUPERATION DE LA SEQUENCE ENTREE A LA MAIN
     def textEnter(self,event):
+        seq=''
         seq=event.GetString()
         k=self.testSeq(seq)
         if k==-1:
@@ -166,14 +159,18 @@ class MyFrame(wx.Frame):
                                    "Sequence non correcte", style = wx.OK)
             retour = dlg.ShowModal()
             dlg.Destroy()
-        self.Nuss()
+        else:
+            print seq
+            self.Nuss(seq)
         #print seq
 
 
 #RECUPERATION DE LA SEQUENCE TEST        
     def seqTest(self,event):
+        seq=''
         seq=seqTest
-        self.Nuss()
+        print seq
+        self.Nuss(seq)
 
 
 #TEST SI SEQUENCE EST BIEN UNE SEQUENCE D'ARN
@@ -185,14 +182,26 @@ class MyFrame(wx.Frame):
 
     
 #DEROULEMENT NUSSINOV PUIS AFFICHAGE RESULTATS
-    def Nuss(self):
+    def Nuss(self,s):
+
+        TB=TraceBack(Mat(s),s,0,len(s)-1)
+        way=modifliste(TB)
+        BP=BasePairs(s,way)
+        BPt=tri_liste(BP)
+       # print "\nway : \n",way
+        #print "\nAssociations : \n",BP
+        #print "\nTri liste : \n",BPt
+        save(BPt)
+
         s="Appariement.txt"
         g=graph(s)
         g.boucle_longueur()
-        winD = MyDraw(None, -1, "Repliement", size=(w,h),style = wx.DEFAULT_FRAME_STYLE)
-        winD.Show(True)
-       # self.SetTopWindow(win)
-        winD.draw(g.l,g.longueur)
+        print g.l
+        print g.longueur
+
+        self.winD = MyDraw(None,-1, "Repliement", size=(w,h))#style = wx.DEFAULT_FRAME_STYLE)
+        self.winD.Show(True)
+        self.winD.draw("AAAA","AAGCG")
 
     
 class MyApp(wx.App):

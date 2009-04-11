@@ -201,16 +201,16 @@ def tri_liste(bp):
 #               #
 #################
 
-f=open("Sequence3.txt","r")
-seq=f.readline()
-seq=seq.rstrip('\n')
-print seq
-print Mat(seq)
-TB=TraceBack(Mat(seq),seq,0,len(seq)-1)
-way=modifliste(TB)
-BP=BasePairs(seq,way)
-BPt=tri_liste(BP)
-print "\nway : \n",way
-print "\nAssociations : \n",BP
-print "\nTri liste : \n",BPt
-save(BPt)
+#f=open("Sequence3.txt","r")
+#seq=f.readline()
+#seq=seq.rstrip('\n')
+#print seq
+#print Mat(seq)
+#TB=TraceBack(Mat(seq),seq,0,len(seq)-1)
+#way=modifliste(TB)
+#BP=BasePairs(seq,way)
+#BPt=tri_liste(BP)
+#print "\nway : \n",way
+#print "\nAssociations : \n",BP
+#print "\nTri liste : \n",BPt
+#save(BPt)
