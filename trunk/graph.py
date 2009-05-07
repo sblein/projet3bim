@@ -23,9 +23,9 @@ class graph:
      #           self.boucle.append(self.l[i])
 
 
-s="Appariement.txt"
-g=graph(s)
-print g.l
-g.boucle_longueur()
-print
-print g.longueur
+#s="Appariement.txt"
+#g=graph(s)
+#print g.l
+#g.boucle_longueur()
+#print
+#print g.longueur
