@@ -38,12 +38,13 @@ class MyDraw(wx.Frame):
       #  dc.SetBrush(wx.Brush("black"))
        # dc.SetPen(wx.Pen("black",1))
         x=5
-        dc.DrawCircle(10,10,10)
-        dc.DrawLine(10,10,20,20)
+      #  dc.DrawCircle(10,10,10)
+       # dc.DrawLine(10,10,20,20)
         for i in range(len(l)):
-            dc.DrawText("%s"%l[i][0],x,10)
-            x+=2  
-            print l[i][0]
+            dc.DrawText("%s"%l[i][1],x,hi/3)
+            dc.DrawArc(x,hi/3-1,x+10,hi/3-1,x+5,hi/3-1)
+            x+=10  
+            print l[i][1]
        
 
 class MyFrame(wx.Frame):
@@ -201,7 +202,7 @@ class MyFrame(wx.Frame):
 
         self.winD = MyDraw(None,-1, "Repliement", size=(w,h))#style = wx.DEFAULT_FRAME_STYLE)
         self.winD.Show(True)
-        self.winD.draw("AAAA","AAGCG")
+        self.winD.draw(g.l,g.longueur)
 
     
 class MyApp(wx.App):
