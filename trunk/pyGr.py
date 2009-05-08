@@ -16,6 +16,24 @@ h=250
 #y1=y2=yp
 #xp=(x2-x1)/2+x1
 
+def graph(s):
+    f=open(s,"r")
+    l=f.readlines()
+    bases=[0]*(len(l)*2)
+    for i in range(len(l)):
+        l[i]=l[i].split()
+        l[i][0]=int(l[i][0])
+        bases[l[i][0]]=l[i][1]
+        if len(l[i])>2:
+            l[i][3]=int(l[i][3])
+            bases[l[i][3]]=l[i][2]
+            print bases[l[i][3]]
+    print l
+    print len(bases)
+    print bases
+    return l,bases
+
+
 class MyDraw(wx.Frame):
 
     def __init__( self, parent, ID, title, pos=wx.DefaultPosition,size=wx.DefaultSize, style=wx.DEFAULT_FRAME_STYLE):
@@ -30,22 +48,27 @@ class MyDraw(wx.Frame):
         self.buffer = wx.EmptyBitmap(wi,hi)
         dc = wx.BufferedDC(wx.ClientDC(self),self.buffer)
         
-    def draw(self, l,lg):
-        wi,hi = self.GetClientSize()
-        self.buffer = wx.EmptyBitmap(wi,hi)
+    def draw(self, l,bases):
+        dw,dh = self.GetClientSize()
+        self.buffer = wx.EmptyBitmap(dw,dh)
         dc = wx.BufferedDC(wx.ClientDC(self),self.buffer)
-        dc.Clear()
+        # dc.Clear()
       #  dc.SetBrush(wx.Brush("black"))
        # dc.SetPen(wx.Pen("black",1))
         x=5
       #  dc.DrawCircle(10,10,10)
        # dc.DrawLine(10,10,20,20)
-        for i in range(len(l)):
-            dc.DrawText("%s"%l[i][1],x,hi/3)
-            dc.DrawArc(x,hi/3-1,x+10,hi/3-1,x+5,hi/3-1)
-            x+=10  
-            print l[i][1]
-       
+        ha=dh/4
+        for i in range(len(l)):			
+            dc.DrawText("%s"%bases[i],x,ha)
+            if len(l[i])!=2:
+                t=l[i][3]-l[i][0]
+                dc.DrawArc(x+5,ha+20,x+5+12*t,ha+20,x+5+6*t,ha+20)
+            x+=12 
+        for i in range(len(l),len(bases)):
+            if bases[i]!=0:
+                dc.DrawText("%s"%bases[i],x,ha)
+                x+=12
 
 class MyFrame(wx.Frame):
 
@@ -194,15 +217,14 @@ class MyFrame(wx.Frame):
         #print "\nTri liste : \n",BPt
         save(BPt)
 
-        s="Appariement.txt"
-        g=graph(s)
-        g.boucle_longueur()
-        print g.l
-        print g.longueur
+        si="Appariement.txt"
+        (l,bases)=graph(si)
+        print l
+        print bases
 
         self.winD = MyDraw(None,-1, "Repliement", size=(w,h))#style = wx.DEFAULT_FRAME_STYLE)
         self.winD.Show(True)
-        self.winD.draw(g.l,g.longueur)
+        self.winD.draw(l,bases)
 
     
 class MyApp(wx.App):

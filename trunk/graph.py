@@ -5,14 +5,23 @@ class graph:
     def __init__(self,s):
         f=open(s,"r")
         self.l=f.readlines()
-        self.nbBases=len(self.l)
-        for i in range(self.nbBases):
+        self.nbBases=0
+        self.bases=[0]*(len(self.l)*2)
+        for i in range(len(self.l)):
             self.l[i]=self.l[i].split()
             self.l[i][0]=int(self.l[i][0])
+            self.bases[self.l[i][0]]=self.l[i][1]
+            self.nbBases+=1
             if len(self.l[i])>2:
                 self.l[i][3]=int(self.l[i][3])
+                self.bases[self.l[i][3]]=self.l[i][2]
+                self.nbBases+=1
+                print self.bases[self.l[i][3]]
     #    self.boucle=[]
         self.longueur=[]
+        print self.l
+        print len(self.bases)
+        print self.bases
 
     def boucle_longueur(self):
         for i in range(self.nbBases):
