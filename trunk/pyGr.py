@@ -1,7 +1,5 @@
 import wx
 
-from graph import *
-
 from Nussinov2 import *
 
 seqTest='GGGCUAUUAGCUCAGUUGGUUAGAGCGCACCCCUGAUAAGGGUGAGGUCGCUGAUUCGAAUUCAGCAUAGCCCA'
