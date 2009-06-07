@@ -7,7 +7,7 @@ seqTest='GGGCUAUUAGCUCAGUUGGUUAGAGCGCACCCCUGAUAAGGGUGAGGUCGCUGAUUCGAAUUCAGCAUAGC
 color='light grey'
 
 w=600
-h=250
+h=350
 
 #Arc de cercle:
 #dc.DrawArc(x1,y1,x2,y2,xp,yp) centred on (xc, yc), with starting point (x1, y1) and ending at (x2, y2)
@@ -50,12 +50,7 @@ class MyDraw(wx.Frame):
         dw,dh = self.GetClientSize()
         self.buffer = wx.EmptyBitmap(dw,dh)
         dc = wx.BufferedDC(wx.ClientDC(self),self.buffer)
-        # dc.Clear()
-      #  dc.SetBrush(wx.Brush("black"))
-       # dc.SetPen(wx.Pen("black",1))
         x=5
-      #  dc.DrawCircle(10,10,10)
-       # dc.DrawLine(10,10,20,20)
         ha=dh/4
         for i in range(len(l)):			
             dc.DrawText("%s"%bases[i],x,ha)
@@ -108,21 +103,24 @@ class MyFrame(wx.Frame):
 
         wi,hi = self.GetClientSize()
 
-        cb=wx.StaticText(self,2,"Entrez votre sequence de test",(20,20),(300,90),wx.ALIGN_CENTRE)
-        myfont3 = wx.Font(16, wx.FONTFAMILY_DECORATIVE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Verdana")
+        cb=wx.StaticText(self,2,"Simulation de repliement de ARN",(65,20),(300,90),wx.ALIGN_CENTRE)
+        myfont3 = wx.Font(20, wx.FONTFAMILY_DECORATIVE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Verdana")
         cb.SetFont(myfont3)
 
+        cb=wx.StaticText(self,2,"Entrez votre sequence a replier",(20,80),(300,90),wx.ALIGN_CENTRE)
+        myfont3 = wx.Font(13, wx.FONTFAMILY_DECORATIVE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Times New Roman")
+        cb.SetFont(myfont3)
 
-        txt=wx.TextCtrl(self,30,'',pos=(0,hi/3),size=(3*wi/4-10,2*hi/3),style=wx.TE_PROCESS_ENTER |wx.TE_MULTILINE )
+        txt=wx.TextCtrl(self,30,'',pos=(5,hi/3),size=(3*wi/4-20,2*hi/3-5),style=wx.TE_PROCESS_ENTER |wx.TE_MULTILINE )
         self.Bind(wx.EVT_TEXT_ENTER,self.textEnter,txt)
         
-        b=wx.Button(self,-1,"Test",pos=(3*wi/4-10,hi/3),size=(160,50))
+        b=wx.Button(self,-1,"Test",pos=(3*wi/4-15,hi/3+30),size=(160,50))
         self.Bind(wx.EVT_BUTTON,self.seqTest,b)
         
-        b=wx.Button(self,-1,"Ouvrir une sequence",pos=(3*wi/4-10,hi/3+50),size=(160,50))
+        b=wx.Button(self,-1,"Ouvrir une sequence",pos=(3*wi/4-15,hi/3+80),size=(160,50))
         self.Bind(wx.EVT_BUTTON,self.OnOpen,b)
 
-        b=wx.Button(self,-1,"Quitter",pos=(3*wi/4-10,hi/3+100),size=(160,50))
+        b=wx.Button(self,-1,"Quitter",pos=(3*wi/4-15,hi/3+130),size=(160,50))
         self.Bind(wx.EVT_BUTTON,self.kill,b)
 
 
