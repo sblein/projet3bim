@@ -1,36 +1,52 @@
 import wx
 
-from Nussinov2 import *
+from Nussinov import *
 
-seqTest='GGGCUAUUAGCUCAGUUGGUUAGAGCGCACCCCUGAUAAGGGUGAGGUCGCUGAUUCGAAUUCAGCAUAGCCCA'
+seqTest='GGGCUAUUGAAUUCAGCAUAGCCCA'
 
 color='light grey'
 
 w=600
 h=350
 
-#Arc de cercle:
-#dc.DrawArc(x1,y1,x2,y2,xp,yp) centred on (xc, yc), with starting point (x1, y1) and ending at (x2, y2)
-#y1=y2=yp
-#xp=(x2-x1)/2+x1
 
 def graph(s):
-    f=open(s,"r")
-    l=f.readlines()
-    bases=[0]*(len(l)*2)
-    for i in range(len(l)):
-        l[i]=l[i].split()
-        l[i][0]=int(l[i][0])
-        bases[l[i][0]]=l[i][1]
-        if len(l[i])>2:
-            l[i][3]=int(l[i][3])
-            bases[l[i][3]]=l[i][2]
-            print bases[l[i][3]]
-    print l
-    print len(bases)
-    print bases
-    return l,bases
+	f=open(s,"r")
+	l=f.readlines()
+	bases=[0]*(len(l)*2)
+	for i in range(len(l)):
+		l[i]=l[i].split()
+		l[i][0]=int(l[i][0])
+		bases[l[i][0]]=l[i][1]
+		if len(l[i])>2:
+			l[i][3]=int(l[i][3])
+			bases[l[i][3]]=l[i][2]
+			
+	print "L :"
+	print l
+	
+	l=tri(l,bases)
+	
+	print "L apres :"
+	print l
+	print "bases : "
+	print bases
+	return l,bases
 
+
+def tri(l,bases):
+	tmp=[]
+	ret=[]*len(l)
+	for i in range(len(l)):
+		if tmp.count(l[i][0])==0:
+			tmp.append(l[i])
+			if len(l[i])>2:
+				if tmp.count(l[i][3])==0:
+					tmp.append(l[i][3])
+					ret.append(l[i])
+			else:
+				ret.append(l[i])
+	return ret
 
 class MyDraw(wx.Frame):
 
@@ -38,7 +54,7 @@ class MyDraw(wx.Frame):
         wx.Frame.__init__(self, parent, ID, title, pos, size, style)
         self.SetAutoLayout(True)
         self.init_buffer()
-       # self.SetBackgroundColour(color)
+       	self.SetBackgroundColour(color)
         wi,hi = self.GetClientSize()
 
     def init_buffer(self):
@@ -50,13 +66,15 @@ class MyDraw(wx.Frame):
         dw,dh = self.GetClientSize()
         self.buffer = wx.EmptyBitmap(dw,dh)
         dc = wx.BufferedDC(wx.ClientDC(self),self.buffer)
-        x=5
+        x=20
         ha=dh/4
         for i in range(len(l)):			
             dc.DrawText("%s"%bases[i],x,ha)
             if len(l[i])!=2:
                 t=l[i][3]-l[i][0]
-                dc.DrawArc(x+5,ha+20,x+5+12*t,ha+20,x+5+6*t,ha+20)
+                dc.DrawLine(x+5,ha+20,x+5,ha+20+t*3)
+                dc.DrawLine(x+5,ha+20+t*3,x+5+t*12,ha+20+t*3)
+                dc.DrawLine(x+5+t*12,ha+20,x+5+t*12,ha+20+t*3)                
             x+=12 
         for i in range(len(l),len(bases)):
             if bases[i]!=0:
@@ -103,15 +121,15 @@ class MyFrame(wx.Frame):
 
         wi,hi = self.GetClientSize()
 
-        cb=wx.StaticText(self,2,"Simulation de repliement de ARN",(65,20),(300,90),wx.ALIGN_CENTRE)
-        myfont3 = wx.Font(20, wx.FONTFAMILY_DECORATIVE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Verdana")
+        cb=wx.StaticText(self,2,"Simulation de repliement de ARN",(65,30),(300,90),wx.ALIGN_CENTRE)
+        myfont3 = wx.Font(25, wx.FONTFAMILY_DECORATIVE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Verdana")
         cb.SetFont(myfont3)
 
-        cb=wx.StaticText(self,2,"Entrez votre sequence a replier",(20,80),(300,90),wx.ALIGN_CENTRE)
-        myfont3 = wx.Font(13, wx.FONTFAMILY_DECORATIVE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Times New Roman")
+        cb=wx.StaticText(self,2,"Entrez votre sequence a replier et appuyez sur Entree",(20,110),(300,90),wx.ALIGN_CENTRE)
+        myfont3 = wx.Font(18, wx.FONTFAMILY_DECORATIVE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Times New Roman")
         cb.SetFont(myfont3)
 
-        txt=wx.TextCtrl(self,30,'',pos=(5,hi/3),size=(3*wi/4-20,2*hi/3-5),style=wx.TE_PROCESS_ENTER |wx.TE_MULTILINE )
+        txt=wx.TextCtrl(self,40,'',pos=(5,hi/2-hi/20),size=(3*wi/4-hi/8,2*hi/6),style=wx.TE_PROCESS_ENTER |wx.TE_MULTILINE )
         self.Bind(wx.EVT_TEXT_ENTER,self.textEnter,txt)
         
         b=wx.Button(self,-1,"Test",pos=(3*wi/4-15,hi/3+30),size=(160,50))
@@ -122,6 +140,8 @@ class MyFrame(wx.Frame):
 
         b=wx.Button(self,-1,"Quitter",pos=(3*wi/4-15,hi/3+130),size=(160,50))
         self.Bind(wx.EVT_BUTTON,self.kill,b)
+        
+        
 
 
 #FERMETURE DE LA FENETRE
@@ -145,13 +165,7 @@ class MyFrame(wx.Frame):
             f=open(chemin,"r")
             seq=f.readline()
             seq=seq.rstrip('\n')
-            #for l in f:
-             #   seq+=l.rstrip('\n')
             f.close()
-           # while seq[len(seq)-1]==' ':
-            #    seq.rstrip(' ')
-            #for i in range(len(seq)):
-           #     print seq[i]
             k=self.testSeq(seq)
             if k==-1:
                 dlg = wx.MessageDialog(self,"Vous devez recharger un sequence correcte \n composee de A, U, C et G",
@@ -160,7 +174,6 @@ class MyFrame(wx.Frame):
             else:
                 dlg.Destroy()
                 self.Nuss(seq)
-        #print seq
 
 
 #FERMETURE DU FICHIER
@@ -208,17 +221,14 @@ class MyFrame(wx.Frame):
         way=modifliste(TB)
         BP=BasePairs(s,way)
         BPt=tri_liste(BP)
-       # print "\nway : \n",way
-        #print "\nAssociations : \n",BP
-        #print "\nTri liste : \n",BPt
         save(BPt)
 
         si="Appariement.txt"
         (l,bases)=graph(si)
-        print l
-        print bases
-
-        self.winD = MyDraw(None,-1, "Repliement", size=(w,h))#style = wx.DEFAULT_FRAME_STYLE)
+        w=len(bases)*10
+        h=len(bases)*5
+        
+        self.winD = MyDraw(None,-1, "Repliement", size=(w,h))
         self.winD.Show(True)
         self.winD.draw(l,bases)
 
