@@ -225,8 +225,8 @@ class MyFrame(wx.Frame):
 
         si="Appariement.txt"
         (l,bases)=graph(si)
-        w=len(bases)*10
-        h=len(bases)*5
+        w=len(bases)*12
+        h=len(bases)*6
         
         self.winD = MyDraw(None,-1, "Repliement", size=(w,h))
         self.winD.Show(True)
