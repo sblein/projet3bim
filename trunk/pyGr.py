@@ -2,7 +2,7 @@ import wx
 
 from Nussinov import *
 
-seqTest='GGGCUAUUGAAUUCAGCAUAGCCCA'
+seqTest='CGUUCCGGGGGGGAACUACCCCCAAAAACGUAGCAUUUUUUUUUUUUGACGCUACAAAAAAGAACG'
 
 color='light grey'
 
@@ -17,29 +17,34 @@ def graph(s):
 	for i in range(len(l)):
 		l[i]=l[i].split()
 		l[i][0]=int(l[i][0])
-		bases[l[i][0]]=l[i][1]
+		#bases[l[i][0]]=L[i][1]
 		if len(l[i])>2:
 			l[i][3]=int(l[i][3])
-			bases[l[i][3]]=l[i][2]
+			#bases[l[i][3]]=l[i][2]
 			
 	print "L :"
 	print l
 	
-	l=tri(l,bases)
-	
+	l=tri(l)
+	for i in range(len(l)):
+		bases[l[i][0]]=l[i][1]
+		if len(l[i])>2:
+			bases[l[i][3]]=l[i][2]
+
 	print "L apres :"
 	print l
 	print "bases : "
 	print bases
+	print len(bases)
 	return l,bases
 
 
-def tri(l,bases):
+def tri(l):
 	tmp=[]
 	ret=[]*len(l)
 	for i in range(len(l)):
 		if tmp.count(l[i][0])==0:
-			tmp.append(l[i])
+			tmp.append(l[i][0])
 			if len(l[i])>2:
 				if tmp.count(l[i][3])==0:
 					tmp.append(l[i][3])
@@ -63,23 +68,26 @@ class MyDraw(wx.Frame):
         dc = wx.BufferedDC(wx.ClientDC(self),self.buffer)
         
     def draw(self, l,bases):
-        dw,dh = self.GetClientSize()
-        self.buffer = wx.EmptyBitmap(dw,dh)
-        dc = wx.BufferedDC(wx.ClientDC(self),self.buffer)
-        x=20
-        ha=dh/4
-        for i in range(len(l)):			
-            dc.DrawText("%s"%bases[i],x,ha)
-            if len(l[i])!=2:
-                t=l[i][3]-l[i][0]
-                dc.DrawLine(x+5,ha+20,x+5,ha+20+t*3)
-                dc.DrawLine(x+5,ha+20+t*3,x+5+t*12,ha+20+t*3)
-                dc.DrawLine(x+5+t*12,ha+20,x+5+t*12,ha+20+t*3)                
-            x+=12 
-        for i in range(len(l),len(bases)):
-            if bases[i]!=0:
-                dc.DrawText("%s"%bases[i],x,ha)
-                x+=12
+	    dw,dh = self.GetClientSize()
+	    self.buffer = wx.EmptyBitmap(dw,dh)
+	    dc = wx.BufferedDC(wx.ClientDC(self),self.buffer)
+	    x=20
+	    ha=dh/4
+	    for i in range(len(bases)):	
+		    if bases[i]!=0:
+			    dc.DrawText("%s"%bases[i],x,ha)
+			    x+=12
+	    for i in range(len(l)):		   
+		    if len(l[i])!=2:
+			    t=l[i][3]-l[i][0]
+			    dc.DrawLine(l[i][0]*12+25,ha+20,l[i][0]*12+25,ha+20+t*3)
+			    dc.DrawLine(l[i][0]*12+25,ha+20+t*3,l[i][3]*12+25,ha+20+t*3)
+			    dc.DrawLine(l[i][3]*12+25,ha+20,l[i][3]*12+25,ha+20+t*3)
+		 #   x=l[i][0]*12+25
+	    #for i in range(len(l),len(bases)):
+		#    if bases[i]!=0:
+			#    dc.DrawText("%s"%bases[i],x,ha)
+			 #   x+=12
 
 class MyFrame(wx.Frame):
 
